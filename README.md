@@ -43,7 +43,7 @@ Django 6, Django REST Framework, PostgreSQL, Tailwind CSS, Docker, déployé sur
 
 ```bash
 # 1. Cloner le dépôt
-git clone https://github.com/fyardlest1/BugTrackerApp.git
+git clone https://github.com/fyardlest1/BugTrackerApp-Final.git
 cd bugtracker
 
 # 2. Créer et activer un environnement virtuel
