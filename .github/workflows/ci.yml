@@ -1,0 +1,33 @@
+# .github/workflows/ci.yml
+name: CI
+on: [push, pull_request]
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        services:
+            postgres:
+                image: postgres:16
+                env:
+                    POSTGRES_USER: bug_user
+                    POSTGRES_PASSWORD: bug_pass
+                    POSTGRES_DB: bugtracker
+                ports: ['5432:5432']
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+        env:
+            SECRET_KEY: cle-de-test-pour-la-ci
+            DEBUG: 'False'
+            DATABASE_URL: postgres://bug_user:bug_pass@localhost:5432/bugtracker
+            OPENAI_API_KEY: cle-factice-non-utilisee-car-mockee
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-python@v5
+              with:
+                  python-version: '3.12'
+            - run: pip install -r requirements.txt
+            - run: python manage.py migrate
+            - run: python manage.py test

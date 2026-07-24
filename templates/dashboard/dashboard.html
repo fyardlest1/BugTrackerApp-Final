@@ -1,0 +1,153 @@
+<!-- templates/dashboard/dashboard.html -->
+{% extends 'base.html' %}
+{% block title %}Tableau de bord - BugTracker{% endblock %}
+
+{% block content %}
+
+{{ priority_labels|json_script:"priority-labels" }}
+{{ priority_data|json_script:"priority-data" }}
+
+<div class="max-w-6xl mx-auto my-8 px-4 space-y-8">
+
+  <!-- Titre de la page -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: #1f2937;">
+        Ton tableau de bord
+      </h1>
+      <p class="text-xs sm:text-sm text-gray-500 mt-1">
+        Aperçu de ton activité et état d'avancement des projets en cours.
+      </p>
+    </div>
+  </div>
+
+  <!-- Cartes de statistiques (Une seule rangée, couleurs distinctes & animations hover) -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+
+    <!-- Projets actifs -->
+    <div class="group relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <div class="flex items-center justify-between mb-2">
+        <p class="text-xs font-bold tracking-wider uppercase text-gray-400">Projets actifs</p>
+        <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg>
+        </span>
+      </div>
+      <p class="text-3xl font-extrabold tracking-tight text-emerald-600" style="color: #059669;">{{ nb_projets }}</p>
+      <div class="absolute bottom-0 left-0 right-0 h-1" style="background-color: #059669;"></div>
+    </div>
+
+    <!-- Tickets actifs -->
+    <div class="group relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <div class="flex items-center justify-between mb-2">
+        <p class="text-xs font-bold tracking-wider uppercase text-gray-400">Tickets actifs</p>
+        <span class="p-2 rounded-xl bg-gray-100 text-gray-700 group-hover:bg-[#1f2937] group-hover:text-white transition-colors duration-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 02 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+        </span>
+      </div>
+      <p class="text-3xl font-extrabold tracking-tight" style="color: #1f2937;">{{ nb_tickets_actifs }}</p>
+      <div class="absolute bottom-0 left-0 right-0 h-1" style="background-color: #1f2937;"></div>
+    </div>
+
+    <!-- Résolus -->
+    <div class="group relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <div class="flex items-center justify-between mb-2">
+        <p class="text-xs font-bold tracking-wider uppercase text-gray-400">Résolus</p>
+        <span class="p-2 rounded-xl bg-emerald-50 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-colors duration-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </span>
+      </div>
+      <p class="text-3xl font-extrabold tracking-tight text-emerald-600" style="color: #059669;">{{ resolved }}</p>
+      <div class="absolute bottom-0 left-0 right-0 h-1" style="background-color: #059669;"></div>
+    </div>
+
+    <!-- Membres -->
+    <div class="group relative overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+      <div class="flex items-center justify-between mb-2">
+        <p class="text-xs font-bold tracking-wider uppercase text-gray-400">Membres</p>
+        <span class="p-2 rounded-xl bg-emerald-100/60 text-emerald-800 group-hover:bg-emerald-800 group-hover:text-white transition-colors duration-300">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 10-4-4 4 4 0 004 4z"></path></svg>
+        </span>
+      </div>
+      <p class="text-3xl font-extrabold tracking-tight text-emerald-700" style="color: #047857;">{{ nb_membres }}</p>
+      <div class="absolute bottom-0 left-0 right-0 h-1" style="background-color: #047857;"></div>
+    </div>
+
+  </div>
+
+  <!-- Cartes de projet -->
+  <div>
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-lg font-bold tracking-tight" style="color: #1f2937;">Tes projets</h2>
+      <a href="{% url 'projects:list' %}" class="text-xs font-semibold text-emerald-800 hover:underline" style="color: #047857;">Voir tous les projets &rarr;</a>
+    </div>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for projet in projets %}
+        <a href="{% url 'projects:detail' projet.pk %}"
+          class="group bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:border-emerald-200/80 hover:shadow-md transition-all duration-200 flex flex-col justify-between">
+          <div>
+            <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-3 group-hover:bg-emerald-600 transition-colors duration-200">
+              <svg class="w-5 h-5 text-emerald-600 group-hover:text-white transition-colors duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+              </svg>
+            </div>
+            <h3 class="font-bold text-base mb-1 group-hover:text-emerald-800 transition-colors" style="color: #1f2937;">
+              {{ projet.name }}
+            </h3>
+          </div>
+          <div class="mt-4 pt-3 border-t border-gray-100 flex items-center justify-between text-xs">
+            <span class="text-gray-500 font-medium">Tickets actifs</span>
+            <span class="font-bold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60" style="color: #047857;">
+              {{ projet.tickets_actifs }}
+            </span>
+          </div>
+        </a>
+      {% empty %}
+        <div class="col-span-full bg-white rounded-2xl p-8 text-center border border-gray-100">
+          <p class="text-gray-400 text-sm italic">Aucun projet actif pour l'instant.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Graphique : tickets par priorité -->
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 transition-all duration-200 hover:shadow-md">
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-2">
+      <svg class="w-5 h-5 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+      </svg>
+      <h2 class="font-bold text-lg tracking-tight" style="color: #1f2937;">Tickets par priorité</h2>
+    </div>
+    <span class="text-xs font-bold text-emerald-800 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200/60" style="color: #047857;">
+      Temps réel
+    </span>
+  </div>
+
+  <div class="relative w-full" style="height: 320px;">
+    <canvas id="priorityChart"></canvas>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const labels = JSON.parse(document.getElementById('priority-labels').textContent);
+  const data = JSON.parse(document.getElementById('priority-data').textContent);
+
+  new Chart(document.getElementById('priorityChart'), {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Tickets',
+        data: data
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false
+    }
+  });
+</script>
+
+{% endblock %}

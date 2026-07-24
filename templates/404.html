@@ -1,0 +1,36 @@
+<!-- templates/404.html -->
+{% extends 'base.html' %}
+{% block title %}Page introuvable - 404{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto text-center py-20 px-4 flex flex-col items-center justify-center min-h-[60vh]">
+  
+  <div class="w-16 h-16 rounded-2xl bg-gray-100 flex items-center justify-center mb-6 border border-gray-200">
+    <svg class="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 4h.01"></path>
+    </svg>
+  </div>
+
+  <p class="text-7xl font-extrabold tracking-tight text-emerald-600 sm:text-8xl select-none" style="color: #059669;">
+    404
+  </p>
+  
+  <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mt-4 mb-3" style="color: #1f2937;">
+    Page introuvable
+  </h1>
+  
+  <p class="text-gray-500 text-sm sm:text-base leading-relaxed mb-8 max-w-sm">
+    La page que vous recherchez n'existe pas, a été déplacée ou est temporairement indisponible.
+  </p>
+  
+  <a href="{% url 'home' %}"
+     class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5"
+     style="background-color: #059669;">
+    <svg class="w-4 h-4 mr-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+    </svg>
+    <span>Retour à l'accueil</span>
+  </a>
+
+</div>
+{% endblock %}

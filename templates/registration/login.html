@@ -1,0 +1,142 @@
+<!-- templates/registration/login.html -->
+{% extends 'base.html' %}
+{% block title %}Connexion - BugTracker{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-10 px-4">
+  
+  <!-- Carte principale de connexion (Formulaire classique) -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 transition-all duration-200 hover:shadow-md">
+    
+    <!-- En-tête -->
+    <div class="text-center mb-8">
+      <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+        <!-- Icône de cadenas fermé (Sécurité & Connexion) -->
+        <svg class="w-6 h-6 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900" style="color: #1f2937;">
+        Ravi de vous revoir
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">Connectez-vous à votre espace BugTracker.</p>
+    </div>
+
+    <!-- Formulaire classique -->
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="flex flex-col">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ field.label }}</label>
+          <div class="django-field-wrapper">
+            {{ field }}
+          </div>
+          {% if field.errors %}
+            <div class="mt-1.5 space-y-1">
+              {% for error in field.errors %}
+                <p class="text-red-600 text-xs flex items-center">
+                  <svg class="w-3.5 h-3.5 mr-1 flex-shrink-0 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                  </svg>
+                  <span>{{ error }}</span>
+                </p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- Bouton de connexion principal -->
+      <button type="submit" 
+              class="w-full inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5 mt-2"
+              style="background-color: #059669;">
+        <span>Se connecter</span>
+      </button>
+    </form>
+
+    <!-- Lien d'inscription secondaire -->
+    <p class="text-sm text-gray-600 text-center mt-6">
+      Pas encore de compte ?
+      <a href="{% url 'register' %}" class="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline" style="color: #059669;">
+        Créer un compte
+      </a>
+    </p>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- NOUVELLE CARTE ATTRAYANTE : MODE DÉMO VERT -->
+  <!-- ========================================== -->
+  <div class="mt-8 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden">
+    
+    <!-- Petite ligne décorative verte au sommet de la carte démo -->
+    <div class="absolute top-0 left-0 right-0 h-1 bg-emerald-600"></div>
+
+    <div class="text-center mb-5 mt-1">
+      <div class="inline-flex items-center space-x-2">
+        <span class="flex h-2 w-2 relative">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+        </span>
+        <p class="text-xs font-bold tracking-wider uppercase text-gray-500">
+          Connexion instantanée (Mode Démo)
+        </p>
+      </div>
+      <p class="text-[11px] text-gray-400 mt-0.5">Explorez l'application instantanément sans remplir de formulaire.</p>
+    </div>
+
+    <form method="post" action="{% url 'demo_login' %}" class="grid grid-cols-2 gap-3">
+      {% csrf_token %}
+      
+      <!-- Bouton Admin -->
+      <button name="role" value="Admin" type="submit"
+              class="flex flex-col items-center justify-center p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all duration-150 shadow-sm shadow-emerald-600/10 hover:-translate-y-0.5">
+        <span class="font-bold text-sm">Admin</span>
+        <span class="text-[10px] text-emerald-100/80 mt-0.5 font-medium">Visibilité totale</span>
+      </button>
+      
+      <!-- Bouton Chef de projet -->
+      <button name="role" value="ProjectManager" type="submit"
+              class="flex flex-col items-center justify-center p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all duration-150 shadow-sm shadow-emerald-600/10 hover:-translate-y-0.5">
+        <span class="font-bold text-sm">Chef de projet</span>
+        <span class="text-[10px] text-emerald-100/80 mt-0.5 font-medium">Gestion d'équipe</span>
+      </button>
+      
+      <!-- Bouton Développeur -->
+      <button name="role" value="Developer" type="submit"
+              class="flex flex-col items-center justify-center p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all duration-150 shadow-sm shadow-emerald-600/10 hover:-translate-y-0.5">
+        <span class="font-bold text-sm">Développeur</span>
+        <span class="text-[10px] text-emerald-100/80 mt-0.5 font-medium">Vos tickets</span>
+      </button>
+      
+      <!-- Bouton Rapporteur -->
+      <button name="role" value="Submitter" type="submit"
+              class="flex flex-col items-center justify-center p-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl transition-all duration-150 shadow-sm shadow-emerald-600/10 hover:-translate-y-0.5">
+        <span class="font-bold text-sm">Rapporteur</span>
+        <span class="text-[10px] text-emerald-100/80 mt-0.5 font-medium">Création alertes</span>
+      </button>
+      
+    </form>
+  </div>
+</div>
+
+<!-- 🎨 Styles complémentaires pour les champs Django -->
+<style>
+  .django-field-wrapper input {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #111827;
+    background-color: #ffffff;
+    transition: all 0.2s;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .django-field-wrapper input:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  }
+</style>
+{% endblock %}
+

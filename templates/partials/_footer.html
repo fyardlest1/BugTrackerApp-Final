@@ -1,0 +1,84 @@
+<!-- templates/partials/_footer.html -->
+<!-- <footer class="bg-gray-100 border-t">
+	<div class="max-w-6xl mx-auto px-4 py-4 text-sm text-gray-500 text-center">
+		BugTracker — Projet de démonstration
+	</div>
+</footer> -->
+
+<footer class="bg-gray-900 text-gray-300 border-t border-gray-800 mt-20" style="background-color: #111827;">
+    <div class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
+        
+        <div class="space-y-4">
+            <div class="flex items-center space-x-2">
+                <svg class="w-6 h-6 text-emerald-500" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                </svg>
+                <span class="font-bold text-lg text-white tracking-wide">BugTracker</span>
+            </div>
+            <p class="text-gray-400 text-xs leading-relaxed">
+                Une solution SaaS robuste et sécurisée d'isolation multi-entreprise pour le suivi et la résolution de vos incidents techniques.
+            </p>
+            <div class="inline-block bg-gray-800 text-emerald-500 text-xs font-semibold px-2.5 py-1 rounded border border-gray-700" style="color: #059669; background-color: #111827;">
+                <a href="{% url 'login' %}">Environnement de Démo</a>
+            </div>
+        </div>
+
+        <div>
+            <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Application</h4>
+            <ul class="space-y-2.5 text-xs text-gray-400">
+                <li>
+                    <a href="{% url 'login' %}" class="hover:text-emerald-500 transition-colors duration-200">Accéder au Dashboard</a>
+                </li>
+                <li>
+                    <a href="{% url 'login' %}" class="hover:text-emerald-500 transition-colors duration-200">Essayer les Rôles</a>
+                </li>
+                <li>
+                    <a href="#" class="hover:text-emerald-500 transition-colors duration-200">Créer un ticket démo</a>
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Comptes de test</h4>
+            <ul class="space-y-2.5 text-xs text-gray-400">
+                <li class="flex items-center justify-between">
+                    <span>Administrateur</span>
+                    <span class="text-[10px] bg-gray-800 px-1.5 py-0.5 rounded text-gray-500">demo.admin</span>
+                </li>
+                <li class="flex items-center justify-between">
+                    <span>Chef de Projet</span>
+                    <span class="text-[10px] bg-gray-800 px-1.5 py-0.5 rounded text-gray-500">demo.pm</span>
+                </li>
+                <li class="flex items-center justify-between">
+                    <span>Développeur</span>
+                    <span class="text-[10px] bg-gray-800 px-1.5 py-0.5 rounded text-gray-500">demo.dev</span>
+                </li>
+            </ul>
+        </div>
+
+        <div>
+            <h4 class="text-white font-semibold text-sm tracking-wider uppercase mb-4">Technologies</h4>
+            <div class="flex flex-wrap gap-2">
+                <span class="text-[11px] bg-gray-800/60 text-gray-300 px-2.5 py-1 rounded-md border border-gray-800">Django 6.x</span>
+                <span class="text-[11px] bg-gray-800/60 text-gray-300 px-2.5 py-1 rounded-md border border-gray-800">Tailwind CSS</span>
+                <span class="text-[11px] bg-gray-800/60 text-gray-300 px-2.5 py-1 rounded-md border border-gray-800">PostgreSQL</span>
+                <span class="text-[11px] bg-gray-800/60 text-gray-300 px-2.5 py-1 rounded-md border border-gray-800">Docker</span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="border-t border-gray-800/60" style="background-color: #111827;">
+        <div class="max-w-6xl mx-auto px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-gray-500">
+            <div>
+                &copy; 2026 BugTracker. Conçu pour les démonstrations techniques et portfolios.
+            </div>
+            <div class="flex space-x-6">
+                <a href="{% url 'docs' %}" class="hover:text-gray-400 transition-colors duration-200" target='_blank'>Documentation API</a>
+                <a href="#" class="hover:text-gray-400 transition-colors duration-200">Code Source</a>
+                <span class="text-gray-700">|</span>
+                <span class="text-gray-600">v1.2.0</span>
+            </div>
+        </div>
+    </div>
+</footer>

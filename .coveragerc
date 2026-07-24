@@ -1,0 +1,10 @@
+# .coveragerc
+[run]
+source = .
+omit =
+    */migrations/*
+    */tests*.py
+    */apps.py
+    manage.py
+    bugtracker/*
+    .venv/*

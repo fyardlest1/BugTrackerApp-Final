@@ -1,0 +1,38 @@
+<!-- templates/base.html -->
+<!doctype html>
+{% load tailwind_cli %}
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>{% block title %}BugTracker{% endblock %}</title>
+		{% tailwind_css %}
+		<style>
+			/* Défilement doux vers les ancres de la landing page.
+			   scroll-margin-top évite que le titre passe sous la barre de navigation. */
+			html { scroll-behavior: smooth; }
+			section[id] { scroll-margin-top: 5rem; }
+		</style>
+	</head>
+	<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+		{% include 'partials/_header.html' %}
+
+		<main class="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
+			{% if messages %}
+				<div class="max-w-6xl mx-auto px-4 mt-4 space-y-2">
+					{% for message in messages %}
+					<div class="rounded-lg px-4 py-2 text-sm
+								{% if message.tags == 'error' %}bg-red-100 text-red-700
+								{% else %}bg-emerald-100 text-emerald-700{% endif %}">
+						{{ message }}
+					</div>
+					{% endfor %}
+				</div>
+			{% endif %}
+
+			{% block content %}{% endblock %}
+		</main>
+        
+		{% include 'partials/_footer.html' %}
+	</body>
+</html>

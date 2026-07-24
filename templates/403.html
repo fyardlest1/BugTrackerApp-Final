@@ -1,0 +1,45 @@
+<!-- templates/403.html -->
+{% extends 'base.html' %}
+{% block title %}Accès refusé - 403{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto text-center py-20 px-4 flex flex-col items-center justify-center min-h-[60vh]">
+  
+  <!-- 1. Icône de cadenas / avertissement -->
+  <div class="w-16 h-16 rounded-2xl bg-emerald-50 flex items-center justify-center mb-6 border border-emerald-100 animate-pulse">
+    <svg class="w-8 h-8 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m0-6v2m0-5a7 7 0 11-14 0 7 7 0 0114 0zM9 9h.01M15 9h.01M12 12h.01"></path>
+    </svg>
+  </div>
+
+  <!-- 2. Code d'erreur -->
+  <p class="text-7xl font-extrabold tracking-tight text-emerald-600 sm:text-8xl select-none" style="color: #059669;">
+    403
+  </p>
+  
+  <!-- 3. Titre -->
+  <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 mt-4 mb-3" style="color: #1f2937;">
+    Accès restreint
+  </h1>
+  
+  <!-- 4. Description -->
+  <p class="text-gray-500 text-sm sm:text-base leading-relaxed mb-8 max-w-sm">
+    Désolé, vos privilèges actuels ou votre affiliation d'entreprise ne vous permettent pas de consulter cette ressource.
+  </p>
+  
+  <!-- 5. Bouton de retour (Structure corrigée avec span et flex-shrink-0) -->
+  <a href="{% url 'home' %}"
+     class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-3 px-6 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5"
+     style="background-color: #059669;">
+    
+    <!-- SVG avec marges et propriétés d'alignement forcé -->
+    <svg class="w-4 h-4 mr-2 flex-shrink-0 inline-block align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+    </svg>
+    
+    <!-- Texte enveloppé dans un span pour forcer l'alignement inline -->
+    <span class="inline-block align-middle">Retour au tableau de bord</span>
+  </a>
+  
+</div>
+{% endblock %}

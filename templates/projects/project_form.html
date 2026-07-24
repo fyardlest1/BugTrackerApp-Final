@@ -1,0 +1,94 @@
+<!-- templates/projects/project_form.html -->
+{% extends 'base.html' %}
+{% block title %}{% if object %}Modifier le projet{% else %}Nouveau projet{% endif %} - BugTracker{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto my-8 px-4">
+
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+
+    <!-- En-tête -->
+    <div class="flex items-center justify-between pb-6 mb-6 border-b border-gray-100">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-2xl font-bold tracking-tight" style="color: #1f2937;">
+            {% if object %}Modifier le projet{% else %}Nouveau projet{% endif %}
+          </h1>
+          <p class="text-xs text-gray-500 mt-0.5">
+            {% if object %}Mets à jour les informations de ce projet.{% else %}Renseigne les détails pour créer un nouveau projet.{% endif %}
+          </p>
+        </div>
+      </div>
+
+      <a href="{% if object %}{% url 'projects:detail' object.pk %}{% else %}{% url 'projects:list' %}{% endif %}"
+         class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200/80 text-gray-700 font-semibold py-2 px-3.5 rounded-xl border border-gray-200/70 transition-all text-xs">
+        <svg class="w-3.5 h-3.5 mr-1 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+        Annuler
+      </a>
+    </div>
+
+    <!-- Formulaire -->
+    <form method="post" class="space-y-5" novalidate>
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div class="bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl p-4 space-y-1">
+          {% for error in form.non_field_errors %}
+            <p class="font-medium">{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      {% for field in form %}
+        <div>
+          <label for="{{ field.id_for_label }}" class="block text-xs font-bold uppercase tracking-wider text-gray-600 mb-1.5">
+            {{ field.label }}
+            {% if field.field.required %}
+              <span class="text-emerald-600" style="color: #059669;">*</span>
+            {% endif %}
+          </label>
+
+          <div class="relative">
+            {{ field }}
+          </div>
+
+          {% if field.help_text %}
+            <p class="text-gray-400 text-xs mt-1">{{ field.help_text }}</p>
+          {% endif %}
+
+          {% for error in field.errors %}
+            <p class="text-red-600 text-xs font-medium mt-1 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+              <span>{{ error }}</span>
+            </p>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <!-- Boutons d'action -->
+      <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
+        <a href="{% if object %}{% url 'projects:detail' object.pk %}{% else %}{% url 'projects:list' %}{% endif %}"
+           class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200 text-sm">
+          Annuler
+        </a>
+        <button type="submit"
+                class="text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-emerald-600/20 transform hover:-translate-y-0.5 transition-all duration-200 text-sm hover:bg-emerald-700"
+                style="background-color: #059669;">
+          Enregistrer
+        </button>
+      </div>
+    </form>
+
+  </div>
+
+</div>
+{% endblock %}

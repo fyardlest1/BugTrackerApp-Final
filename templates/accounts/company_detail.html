@@ -1,0 +1,176 @@
+<!-- templates/accounts/company_detail.html -->
+<!-- templates/companies/company_detail.html -->
+{% extends 'base.html' %}
+{% block title %}{{ company.name }} - BugTracker{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto my-8 px-4 space-y-8">
+
+  <!-- CARTE 1 : Identité de l'entreprise -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 transition-all duration-200 hover:shadow-md">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+      
+      <!-- Logo + Informations principales -->
+      <div class="flex items-center gap-5">
+        {% if company.logo %}
+          <img src="{{ company.logo.url }}" alt="{{ company.name }}"
+               class="w-20 h-20 object-cover rounded-2xl border-2 border-gray-100 shadow-sm flex-shrink-0">
+        {% else %}
+          <!-- Fallback si pas de logo -->
+          <div class="w-20 h-20 rounded-2xl bg-emerald-50 border-2 border-emerald-100 flex items-center justify-center text-emerald-700 font-bold text-2xl shadow-sm flex-shrink-0" style="color: #059669;">
+            {{ company.name|slice:":1"|upper }}
+          </div>
+        {% endif %}
+        
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900" style="color: #1f2937;">
+            {{ company.name }}
+          </h1>
+          <p class="text-gray-500 text-sm mt-1 max-w-xl leading-relaxed">
+            {{ company.description|default:"Aucune description renseignée pour cette entreprise." }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Admin : Modifier l'entreprise -->
+      {% if user.role == 'Admin' %}
+        <div class="flex-shrink-0">
+          <a href="{% url 'company_edit' %}"
+             class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5 text-sm"
+             style="background-color: #059669;">
+            <svg class="w-4 h-4 mr-2 flex-shrink-0 inline-block align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            <span class="inline-block align-middle">Modifier l'entreprise</span>
+          </a>
+        </div>
+      {% endif %}
+
+    </div>
+  </div>
+
+  <!-- DEUX COLONNES : Membres & Projets récents -->
+  <div class="grid md:grid-cols-2 gap-8">
+
+    <!-- COLONNE 1 : Membres de l'entreprise -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex flex-col justify-between">
+      <div>
+        <!-- En-tête de la carte -->
+        <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
+          <div class="flex items-center space-x-2">
+            <svg class="w-5 h-5 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+            </svg>
+            <h2 class="text-lg font-bold text-gray-900" style="color: #1f2937;">Membres</h2>
+          </div>
+          <span class="text-xs font-semibold bg-gray-100 text-gray-600 px-2.5 py-1 rounded-full">
+            {{ members|length }} membre{{ members|length|pluralize }}
+          </span>
+        </div>
+
+        <!-- Liste des membres -->
+        <ul class="divide-y divide-gray-100">
+          {% for member in members %}
+            <li class="py-3.5 flex items-center justify-between gap-4">
+              <div class="flex items-center space-x-3 min-w-0">
+                <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-700 font-bold flex items-center justify-center text-xs flex-shrink-0 border border-emerald-100" style="color: #059669;">
+                  {{ member.username|slice:":1"|upper }}
+                </div>
+                <span class="font-semibold text-sm text-gray-800 truncate" style="color: #1f2937;">
+                  {{ member.get_full_name|default:member.username }}
+                </span>
+                <span class="text-sm text-gray-500">
+                  {{ member.nb_projets }} projet{{ member.nb_projets|pluralize }}
+                </span>
+                
+              </div>
+
+              <!-- Gestion du rôle -->
+              {% if user.role == 'Admin' and member != user %}
+                <form method="post" action="{% url 'change_role' member.pk %}" class="flex-shrink-0">
+                  {% csrf_token %}
+                  <select name="role" onchange="this.form.submit()"
+                          class="bg-gray-50 border border-gray-200 text-gray-700 text-xs rounded-xl px-3 py-1.5 focus:outline-none focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 cursor-pointer font-medium">
+                    {% for value, label in roles %}
+                      <option value="{{ value }}" {% if value == member.role %}selected{% endif %}>
+                        {{ label }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </form>
+              {% else %}
+                <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-gray-100 text-gray-600 flex-shrink-0">
+                  {{ member.role_label|default:'Sans rôle' }}
+                </span>
+              {% endif %}
+            </li>
+          {% empty %}
+            <li class="py-8 text-center text-gray-400 text-sm">
+              Aucun membre associé pour le moment.
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Formulaire d'invitation (Réservé aux Administrateurs) -->
+      {% if user.role == 'Admin' %}
+        <div class="mt-6 pt-5 border-t border-gray-100">
+          <p class="text-xs font-semibold text-gray-600 mb-2">Inviter un nouveau collaborateur</p>
+          <form method="post" action="{% url 'create_invite' %}" class="flex items-center gap-2">
+            {% csrf_token %}
+            <input type="email" name="email" required placeholder="nom@entreprise.com"
+                   class="w-full bg-white border border-gray-200 text-gray-800 text-sm rounded-xl px-3.5 py-2 focus:outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-600/10 transition-all">
+            <button type="submit" 
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm py-2 px-4 rounded-xl transition-all duration-200 flex-shrink-0 shadow-sm"
+                    style="background-color: #059669;">
+              Inviter
+            </button>
+          </form>
+        </div>
+      {% endif %}
+
+    </div>
+
+    <!-- COLONNE 2 : Projets récents -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+      
+      <!-- En-tête de la carte -->
+      <div class="flex items-center justify-between pb-4 mb-4 border-b border-gray-100">
+        <div class="flex items-center space-x-2">
+          <svg class="w-5 h-5 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path>
+          </svg>
+          <h2 class="text-lg font-bold text-gray-900" style="color: #1f2937;">Projets récents</h2>
+        </div>
+        <a href="{% url 'projects:list' %}" class="text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline" style="color: #059669;">
+          Voir tout
+        </a>
+      </div>
+
+      <!-- Liste des projets -->
+      <ul class="divide-y divide-gray-100">
+        {% for project in projects %}
+          <li class="py-3.5 flex items-center justify-between group">
+            <a href="{% url 'projects:detail' project.pk %}"
+               class="font-semibold text-sm text-gray-800 group-hover:text-emerald-600 transition-colors flex items-center space-x-2"
+               style="color: #1f2937;">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500" style="background-color: #059669;"></span>
+              <span>{{ project.name }}</span>
+            </a>
+            <svg class="w-4 h-4 text-gray-300 group-hover:text-emerald-600 group-hover:translate-x-0.5 transition-all" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+          </li>
+        {% empty %}
+          <li class="py-8 text-center text-gray-400 text-sm">
+            Aucun projet enregistré pour le moment.
+          </li>
+        {% endfor %}
+      </ul>
+
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

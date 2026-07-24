@@ -1,0 +1,332 @@
+<!-- templates/tickets/ticket_detail.html -->
+{% extends 'base.html' %}
+{% block title %}{{ ticket.title }} - BugTracker{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto my-8 px-4 space-y-6">
+
+  <!-- ========================================== -->
+  <!-- CARTE 1 : INFORMATIONS DU TICKET           -->
+  <!-- ========================================== -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 transition-all duration-200 hover:shadow-md">
+    
+    <!-- En-tête : Titre & Actions principales -->
+    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 pb-6 mb-6 border-b border-gray-100">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900" style="color: #1f2937;">
+          {{ ticket.title }}
+        </h1>
+        <p class="text-xs text-gray-400 mt-1">Créé le {{ ticket.created_at|default:ticket.created_at|date:"d/m/Y à H:i" }}</p>
+      </div>
+
+      <div class="flex items-center gap-3 flex-shrink-0">
+        {% if can_edit %}
+          <a href="{% url 'tickets:update' ticket.pk %}"
+             class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5 text-sm"
+             style="background-color: #059669;">
+            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+            </svg>
+            <span>Modifier</span>
+          </a>
+        {% endif %}
+
+        <a href="{% url 'tickets:list' %}"
+           class="inline-flex items-center justify-center bg-gray-100 hover:bg-gray-200/80 text-gray-700 font-semibold py-2 px-4 rounded-xl border border-gray-200/70 transition-all duration-200 text-sm">
+          <svg class="w-4 h-4 mr-1.5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+          </svg>
+          <span>Retour</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Badges Métadonnées -->
+    <div class="flex flex-wrap items-center gap-2 mb-6">
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 border border-gray-200">
+        Statut : {{ ticket.get_status_display }}
+      </span>
+
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60" style="color: #047857;">
+        Priorité : {{ ticket.get_priority_display }}
+      </span>
+
+      <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
+        Projet : <strong class="ml-1 font-bold text-gray-900" style="color: #1f2937;">{{ ticket.project.name }}</strong>
+      </span>
+    </div>
+
+    <!-- Description du ticket -->
+    <div class="bg-gray-50/60 border border-gray-200/60 rounded-xl p-4 mb-6">
+      <h3 class="text-xs font-bold uppercase tracking-wider text-gray-400">Description</h3>
+      <p class="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
+        {{ ticket.description|default:"Aucune description détaillée fournie." }}
+      </p>
+    </div>
+
+    <!-- Intervenants (Rapporteur & Développeur) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm pt-4 border-t border-gray-100">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-full bg-gray-100 text-gray-600 font-bold flex items-center justify-center text-xs border border-gray-200">
+          {{ ticket.submitter.username|slice:":1"|upper }}
+        </div>
+        <div>
+          <span class="text-xs text-gray-400 block">Rapporteur</span>
+          <span class="font-semibold text-gray-800" style="color: #1f2937;">
+            {{ ticket.submitter.get_full_name|default:ticket.submitter.username }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        {% if ticket.developer %}
+          <div class="w-9 h-9 rounded-full bg-emerald-50 text-emerald-700 font-bold flex items-center justify-center text-xs border border-emerald-100" style="color: #059669;">
+            {{ ticket.developer.username|slice:":1"|upper }}
+          </div>
+          <div>
+            <span class="text-xs text-gray-400 block">Développeur assigné</span>
+            <span class="font-semibold text-gray-800" style="color: #1f2937;">
+              {{ ticket.developer.get_full_name|default:ticket.developer.username }}
+            </span>
+          </div>
+        {% else %}
+          <div class="w-9 h-9 rounded-full bg-gray-100 text-gray-400 flex items-center justify-center text-xs">
+            ?
+          </div>
+          <div>
+            <span class="text-xs text-gray-400 block">Développeur assigné</span>
+            <span class="text-gray-400 italic text-xs">Non assigné</span>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Zone d'assignation rapide (Admin & Chef de Projet) -->
+    {% if user.role == 'Admin' or user == ticket.project.manager %}
+      <div class="mt-6 pt-5 border-t border-gray-100 bg-emerald-50/30 -mx-6 -mb-6 p-6 rounded-b-2xl border-dashed">
+        <form method="post" action="{% url 'tickets:assign' ticket.pk %}" class="flex items-center gap-3">
+          {% csrf_token %}
+          <label class="text-xs font-bold text-gray-600 flex-shrink-0">Attribuer ce ticket :</label>
+          <select name="developer" class="bg-white border border-gray-200 text-gray-800 text-xs rounded-xl px-3 py-2 focus:outline-none focus:border-emerald-600">
+            {% for dev in eligible_developers %}
+              <option value="{{ dev.pk }}" {% if ticket.developer == dev %}selected{% endif %}>
+                {{ dev.get_full_name|default:dev.username }}
+              </option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="bg-gray-800 hover:bg-gray-900 text-white font-semibold text-xs py-2 px-4 rounded-xl transition-all">
+            Assigner
+          </button>
+        </form>
+      </div>
+    {% endif %}
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CARTE 2 : PIÈCES JOINTES                   -->
+  <!-- ========================================== -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8">
+    <div class="flex items-center space-x-2 pb-4 mb-4 border-b border-gray-100">
+      <svg class="w-5 h-5 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path>
+      </svg>
+      <h2 class="text-lg font-bold text-gray-900" style="color: #1f2937;">Pièces jointes</h2>
+    </div>
+
+    <!-- Liste des pièces jointes -->
+    <div class="space-y-2">
+      {% for attachment in ticket.attachments.all %}
+        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200/60">
+          <div class="flex items-center space-x-3 min-w-0">
+            {% if attachment.kind == 'image' %}
+              <img src="{{ attachment.file.url }}" alt="" class="w-10 h-10 object-cover rounded-lg border border-gray-200 flex-shrink-0">
+            {% elif attachment.kind == 'pdf' %}
+              <span class="w-10 h-10 rounded-lg bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center flex-shrink-0">PDF</span>
+            {% elif attachment.kind == 'csv' or attachment.kind == 'spreadsheet' or attachment.kind == 'excel' %}
+              <span class="w-10 h-10 rounded-lg bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center flex-shrink-0">XLS</span>
+            {% else %}
+              <span class="w-10 h-10 rounded-lg bg-gray-200 text-gray-600 font-bold text-xs flex items-center justify-center flex-shrink-0">DOC</span>
+            {% endif %}
+
+            <div class="truncate">
+              <a href="{{ attachment.file.url }}" target="_blank" class="text-sm font-semibold text-gray-800 hover:text-emerald-600 transition-colors truncate block" style="color: #1f2937;">
+                {{ attachment.file_name }}
+              </a>
+              {% if attachment.description %}
+                <p class="text-xs text-gray-400 truncate">{{ attachment.description }}</p>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if attachment.author == user %}
+            <form method="post" action="{% url 'tickets:delete_attachment' attachment.pk %}" class="ml-2">
+              {% csrf_token %}
+              <button type="submit" onclick="return confirm('Supprimer ce fichier ?');" class="text-gray-400 hover:text-red-600 p-1.5 rounded-lg hover:bg-red-50 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+              </button>
+            </form>
+          {% endif %}
+        </div>
+      {% empty %}
+        <p class="text-gray-400 text-sm italic py-2">Aucune pièce jointe pour le moment.</p>
+      {% endfor %}
+    </div>
+
+    <!-- Formulaire d'ajout de pièce jointe -->
+    <form method="post" enctype="multipart/form-data" action="{% url 'tickets:add_attachment' ticket.pk %}" class="mt-6 pt-5 border-t border-gray-100 space-y-3">
+      {% csrf_token %}
+      <p class="text-xs font-bold text-gray-600">Ajouter un document ou une capture d'écran</p>
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <input type="file" name="file" required class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-gray-100 file:text-gray-700 hover:file:bg-gray-200 cursor-pointer">
+        <input type="text" name="description" placeholder="Description (facultatif)" class="bg-white border border-gray-200 text-gray-800 text-xs rounded-xl px-3.5 py-2 focus:outline-none focus:border-emerald-600">
+      </div>
+
+      <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-xs py-2.5 px-5 rounded-xl transition-all shadow-sm" style="background-color: #059669;">
+        Joindre le fichier
+      </button>
+    </form>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CARTE 3 : COMMENTAIRES                     -->
+  <!-- ========================================== -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-3 sm:p-6">
+    <div class="flex items-center space-x-2 pb-3 mb-4 border-b border-gray-100">
+      <svg class="w-5 h-5 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+      </svg>
+      <h2 class="text-lg font-bold text-gray-900" style="color: #1f2937;">Commentaires</h2>
+    </div>
+
+    <!-- Liste des commentaires -->
+    <div class="space-y-3 mb-4">
+      {% for comment in ticket.comments.all %}
+        {% include 'partials/_comment.html' %}
+      {% empty %}
+        <p class="text-gray-400 text-sm italic py-2">Aucun commentaire pour l'instant. Soyez le premier à réagir !</p>
+      {% endfor %}
+    </div>
+
+    <!-- Formulaire pour commenter -->
+    <form method="post" action="{% url 'tickets:add_comment' ticket.pk %}" class="space-y-3 pt-4 border-t border-gray-100">
+      {% csrf_token %}
+      <div class="comment-field-wrapper">
+        {{ comment_form.content }}
+      </div>
+      <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-5 rounded-xl transition-all shadow-sm" style="background-color: #059669;">
+        Publier le commentaire
+      </button>
+    </form>
+  </div>
+
+  <!-- ========================================== -->
+  <!-- CARTE 4 : MONTRER L'HISTORIQUE             -->
+  <!-- ========================================== -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mt-6 transition-all duration-200 hover:shadow-md">
+  
+    <!-- En-tête de la section -->
+    <div class="flex items-center space-x-2 pb-4 mb-6 border-b border-gray-100">
+      <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+      </svg>
+      <h2 class="text-lg font-bold text-gray-900" style="color: #1f2937;">
+        Historique des modifications
+      </h2>
+    </div>
+  
+    {% if ticket.history.all %}
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left border-collapse whitespace-nowrap">
+          <thead>
+            <tr class="bg-gray-50/80 text-gray-500 border-b border-gray-100 text-xs font-semibold uppercase tracking-wider">
+              <th class="py-3 px-4 rounded-l-xl">Champ</th>
+              <th class="py-3 px-4">Ancienne valeur</th>
+              <th class="py-3 px-4">Nouvelle valeur</th>
+              <th class="py-3 px-4">Modifié par</th>
+              <th class="py-3 px-4 rounded-r-xl">Date & Heure</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {% for h in ticket.history.all %}
+              <tr class="hover:bg-emerald-50/30 transition-colors duration-150">
+                <!-- Champ -->
+                <td class="py-3.5 px-4 font-bold text-gray-800" style="color: #1f2937;">
+                  {{ h.field }}
+                </td>
+  
+                <!-- Ancienne valeur -->
+                <td class="py-3.5 px-4 text-gray-500 max-w-xs truncate">
+                  {% if h.old_value %}
+                    <span class="line-through opacity-80">{{ h.old_value }}</span>
+                  {% else %}
+                    <span class="text-gray-400 italic text-xs">—</span>
+                  {% endif %}
+                </td>
+  
+                <!-- Nouvelle valeur (Mise en valeur Ambre) -->
+                <td class="py-3.5 px-4 max-w-xs truncate">
+                  <span class="inline-block px-2.5 py-0.5 rounded-lg text-xs font-semibold bg-emerald-50 text-emerald-900 border border-emerald-200/60" style="color: #065f46;">
+                    {{ h.new_value|default:"—" }}
+                  </span>
+                </td>
+  
+                <!-- Auteur -->
+                <td class="py-3.5 px-4 text-gray-700">
+                  {% if h.author %}
+                    <div class="flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-gray-100 text-gray-600 font-bold text-[10px] flex items-center justify-center border border-gray-200 flex-shrink-0">
+                        {{ h.author.username|slice:":1"|upper }}
+                      </span>
+                      <span class="font-medium text-gray-800">{{ h.author.get_full_name|default:h.author.username }}</span>
+                    </div>
+                  {% else %}
+                    <span class="inline-flex items-center text-xs text-gray-500 italic">
+                      Système
+                    </span>
+                  {% endif %}
+                </td>
+  
+                <!-- Date -->
+                <td class="py-3.5 px-4 text-xs text-gray-400 font-mono">
+                  {{ h.created_at|date:'d/m/Y à H:i' }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-gray-400 text-sm italic py-2">
+        Aucune modification enregistrée pour l'instant.
+      </p>
+    {% endif %}
+  </div>
+  
+
+</div>
+
+<!-- 🎨 Injection CSS pour le champ texte du commentaire Django -->
+<style>
+  .comment-field-wrapper textarea {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.875rem;
+    color: #111827;
+    background-color: #ffffff;
+    transition: all 0.2s;
+    outline: none;
+    box-sizing: border-box;
+    min-height: 90px;
+  }
+  .comment-field-wrapper textarea:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  }
+</style>
+{% endblock %}

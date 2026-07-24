@@ -1,0 +1,46 @@
+<!-- templates/partials/_comment.html -->
+<div class="p-4 bg-gray-50/70 hover:bg-gray-50 border border-gray-200/60 rounded-xl transition-colors duration-150 mb-3">
+  
+  <!-- En-tête : Avatar, Auteur, Date et Action -->
+  <div class="flex items-center justify-between mb-2">
+    <div class="flex items-center space-x-2.5">
+      <!-- Badge Initiales de l'auteur -->
+      <div class="w-7 h-7 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center border border-emerald-200/60 flex-shrink-0" style="color: #059669;">
+        {{ comment.author.username|slice:":1"|upper }}
+      </div>
+      
+      <!-- Auteur et Date -->
+      <div class="flex items-center space-x-2">
+        <span class="text-sm font-semibold text-gray-900" style="color: #1f2937;">
+          {{ comment.author.get_full_name|default:comment.author.username }}
+        </span>
+        <span class="text-gray-300">•</span>
+        <span class="text-xs text-gray-400">
+          {{ comment.created|date:"d/m/Y H:i" }}
+        </span>
+      </div>
+    </div>
+
+    <!-- Bouton de suppression pour l'auteur -->
+    {% if comment.author == user %}
+      <form method="post" action="{% url 'tickets:delete_comment' comment.pk %}" class="m-0">
+        {% csrf_token %}
+        <button type="submit" 
+                title="Supprimer ce commentaire"
+                onclick="return confirm('Voulez-vous vraiment supprimer ce commentaire ?');"
+                class="text-gray-400 hover:text-red-600 p-1 rounded-lg hover:bg-red-50 transition-colors duration-150 inline-flex items-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+          </svg>
+          <span class="sr-only">Supprimer</span>
+        </button>
+      </form>
+    {% endif %}
+  </div>
+
+  <!-- Contenu du commentaire -->
+  <p class="text-sm text-gray-700 leading-relaxed whitespace-pre-line pl-9">
+    {{ comment.content }}
+  </p>
+
+</div>

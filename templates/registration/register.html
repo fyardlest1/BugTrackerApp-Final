@@ -1,0 +1,96 @@
+<!-- templates/registration/register.html -->
+{% extends 'base.html' %}
+{% block title %}Créer un compte - BugTracker{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto my-10 px-4">
+  
+  <!-- Carte principale d'inscription -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 transition-all duration-200 hover:shadow-md">
+    
+    <!-- En-tête avec icône adaptée -->
+    <div class="text-center mb-8">
+      <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+        <!-- Icône d'ajout d'utilisateur (Création de compte) -->
+        <svg class="w-6 h-6 text-emerald-600" style="color: #059669;" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900" style="color: #1f2937;">
+        Créer un compte
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">Inscrivez-vous pour commencer à suivre vos projets.</p>
+    </div>
+
+    <!-- Formulaire -->
+    <form method="post" class="space-y-5">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="flex flex-col">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">{{ field.label }}</label>
+          
+          <div class="django-field-wrapper">
+            {{ field }}
+          </div>
+          
+          <!-- Gestion des messages d'erreur -->
+          {% if field.errors %}
+            <div class="mt-1.5 space-y-1">
+              {% for error in field.errors %}
+                <p class="text-red-600 text-xs flex items-center">
+                  <svg class="w-3.5 h-3.5 mr-1 flex-shrink-0 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                  </svg>
+                  <span>{{ error }}</span>
+                </p>
+              {% endfor %}
+            </div>
+          {% endif %}
+          
+          <!-- Gestion du texte d'aide (ex: critères du mot de passe) -->
+          {% if field.help_text %}
+            <p class="text-gray-400 text-[11px] leading-normal mt-1.5 px-1">
+              {{ field.help_text|safe }}
+            </p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- Bouton de soumission principal -->
+      <button type="submit" 
+              class="w-full inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5 mt-2"
+              style="background-color: #059669;">
+        <span>Créer mon compte</span>
+      </button>
+    </form>
+
+    <!-- Lien vers la page de Connexion -->
+    <p class="text-sm text-gray-600 text-center mt-6">
+      Déjà un compte ?
+      <a href="{% url 'login' %}" class="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline" style="color: #059669;">
+        Se connecter
+      </a>
+    </p>
+  </div>
+</div>
+
+<!-- 🎨 Injection de styles pour adapter les inputs par défaut de Django -->
+<style>
+  .django-field-wrapper input {
+    width: 100%;
+    border: 1px solid #e5e7eb; /* border-gray-200 */
+    border-radius: 0.75rem;     /* rounded-xl */
+    padding: 0.625rem 0.875rem; /* px-3.5 py-2.5 */
+    font-size: 0.875rem;        /* text-sm */
+    color: #111827;
+    background-color: #ffffff;
+    transition: all 0.2s;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .django-field-wrapper input:focus {
+    border-color: #059669;      /* border-emerald-600 */
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  }
+</style>
+{% endblock %}

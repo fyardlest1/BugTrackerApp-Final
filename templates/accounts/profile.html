@@ -1,0 +1,127 @@
+<!-- templates/accounts/profile.html -->
+{% extends 'base.html' %}
+{% block title %}Mon profil - BugTracker{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto my-10 px-4">
+  
+  <!-- Carte principale du profil -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 transition-all duration-200 hover:shadow-md">
+    
+    <!-- En-tête centré avec avatar rond bien dimensionné au-dessus -->
+    <div class="flex flex-col items-center text-center pb-6 mb-8 border-b border-gray-100">
+      
+      <!-- Avatar de taille équilibrée (96px), rond et centré au-dessus -->
+      <div class="mb-4 flex-shrink-0">
+        {% if user.avatar %}
+          <img src="{{ user.avatar.url }}" alt="Avatar de {{ user.get_full_name|default:user.username }}"
+               class="w-20 h-20 rounded-full object-cover border-4 border-emerald-50/80 shadow-md mx-auto">
+        {% else %}
+          <div class="w-24 h-24 rounded-full bg-emerald-50 border-4 border-emerald-100/60 flex items-center justify-center text-emerald-700 font-bold text-2xl shadow-md mx-auto" style="color: #059669;">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Informations de l'utilisateur centrées -->
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900" style="color: #1f2937;">
+        Mon profil
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">
+        Gérez vos informations personnelles et préférences de compte.
+      </p>
+      {% if user.company %}
+        <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full mt-3">
+          {{ user.company.name }}
+        </span>
+      {% endif %}
+    </div>
+
+    <!-- Formulaire d'édition de profil -->
+    <form method="post" enctype="multipart/form-data" class="space-y-5">
+      {% csrf_token %}
+      
+      {% for field in form %}
+        <div class="flex flex-col">
+          <label class="block text-sm font-semibold text-gray-700 mb-1.5">
+            {{ field.label }}
+          </label>
+          
+          <div class="django-field-wrapper">
+            {{ field }}
+          </div>
+          
+          <!-- Messages d'erreur par champ -->
+          {% if field.errors %}
+            <div class="mt-1.5 space-y-1">
+              {% for error in field.errors %}
+                <p class="text-red-600 text-xs flex items-center">
+                  <svg class="w-3.5 h-3.5 mr-1 flex-shrink-0 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                  </svg>
+                  <span>{{ error }}</span>
+                </p>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if field.help_text %}
+            <p class="text-gray-400 text-[11px] leading-normal mt-1.5 px-1">
+              {{ field.help_text|safe }}
+            </p>
+          {% endif %}
+        </div>
+      {% endfor %}
+
+      <!-- Actions du formulaire -->
+      <div class="flex flex-col sm:flex-row items-center justify-between pt-4 gap-4">
+        <!-- Bouton d'enregistrement principal -->
+        <button type="submit" 
+                class="w-full sm:w-auto inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5"
+                style="background-color: #059669;">
+          <span>Enregistrer les modifications</span>
+        </button>
+
+        <!-- Lien de sécurité (Changement de mot de passe) -->
+        <a href="{% url 'password_change' %}" 
+           class="w-full sm:w-auto inline-flex items-center justify-center text-xs font-semibold text-gray-600 hover:text-emerald-600 bg-gray-50 hover:bg-gray-100 border border-gray-200 py-3 px-5 rounded-xl transition-all duration-200">
+          <svg class="w-4 h-4 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 0121 9z"></path>
+          </svg>
+          <span>Changer mon mot de passe</span>
+        </a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 🎨 Style pour adapter les inputs par défaut de Django -->
+<!-- <style>
+  .django-field-wrapper input:not([type="file"]), 
+  .django-field-wrapper select, 
+  .django-field-wrapper textarea {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+    color: #111827;
+    background-color: #ffffff;
+    transition: all 0.2s;
+    outline: none;
+    box-sizing: border-box;
+  }
+  
+  .django-field-wrapper input:not([type="file"]):focus, 
+  .django-field-wrapper select:focus, 
+  .django-field-wrapper textarea:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  }
+
+  .django-field-wrapper input[type="file"] {
+    font-size: 0.875rem;
+    color: #6b7280;
+  }
+</style> -->
+{% endblock %}

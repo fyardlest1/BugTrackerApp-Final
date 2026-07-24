@@ -1,0 +1,162 @@
+<!-- templates/tickets/ticket_list.html -->
+{% extends 'base.html' %}
+{% block title %}Tickets - BugTracker{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto my-8 px-4">
+
+  <!-- EN-TÊTE : Titre à gauche, Bouton aligné à droite -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+    <div>
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900" style="color: #1f2937;">
+        Tickets
+      </h1>
+      <p class="text-sm text-gray-500 mt-1">
+        Consultez et gérez l'ensemble des tickets et anomalies signalés.
+      </p>
+    </div>
+
+    <div class="flex items-center sm:ml-auto">
+      <a href="{% url 'tickets:create' %}"
+         class="inline-flex items-center justify-center bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-4 rounded-xl shadow-md shadow-emerald-600/10 transition-all duration-200 hover:-translate-y-0.5 text-sm"
+         style="background-color: #059669;">
+        <svg class="w-4 h-4 mr-2 flex-shrink-0 inline-block align-middle" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        <span class="inline-block align-middle">Nouveau ticket</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- BARRE DE FILTRES DYNAMIQUE -->
+  {% if filter %}
+  <div class="bg-white rounded-2xl border border-gray-200/80 p-4 mb-6 shadow-sm">
+    <form method="get" class="filter-form flex flex-wrap items-center gap-3">
+      
+      <!-- Titre Search Input -->
+      <div class="flex-1 min-w-[200px]">
+        {{ filter.form.title }}
+      </div>
+
+      <!-- Statut Select -->
+      <div class="w-full sm:w-auto min-w-[150px]">
+        {{ filter.form.status }}
+      </div>
+
+      <!-- Priorité Select -->
+      <div class="w-full sm:w-auto min-w-[150px]">
+        {{ filter.form.priority }}
+      </div>
+
+      <!-- Bouton Filtrer -->
+      <button type="submit" 
+              class="inline-flex items-center justify-center bg-gray-800 hover:bg-gray-900 text-white font-semibold py-2.5 px-5 rounded-xl transition-all duration-150 text-sm">
+        <svg class="w-4 h-4 mr-1.5 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path>
+        </svg>
+        <span>Filtrer</span>
+      </button>
+
+    </form>
+  </div>
+  {% endif %}
+
+  <!-- CARTE & TABLEAU DES TICKETS -->
+  <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-gray-50 border-b border-gray-200/80 text-gray-500 text-xs uppercase tracking-wider font-semibold">
+            <th class="px-6 py-4">Titre</th>
+            <th class="px-6 py-4">Projet</th>
+            <th class="px-6 py-4">Statut</th>
+            <th class="px-6 py-4">Priorité</th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y divide-gray-100">
+          {% for ticket in tickets %}
+            <tr class="hover:bg-emerald-50/40 transition-colors duration-150">
+              
+              <!-- Titre -->
+              <td class="px-6 py-4">
+                <a href="{% url 'tickets:detail' ticket.pk %}"
+                   class="font-semibold text-gray-800 hover:text-emerald-600 transition-colors text-base block"
+                   style="color: #1f2937;">
+                  {{ ticket.title }}
+                </a>
+              </td>
+
+              <!-- Projet -->
+              <td class="px-6 py-4 text-sm text-gray-600">
+                <span class="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-md bg-gray-100 text-gray-700">
+                  {{ ticket.project.name }}
+                </span>
+              </td>
+
+              <!-- Statut -->
+              <td class="px-6 py-4 text-sm">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700 border border-gray-200">
+                  {{ ticket.get_status_display }}
+                </span>
+              </td>
+
+              <!-- Priorité -->
+              <td class="px-6 py-4 text-sm">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-800 border border-emerald-200/60" style="color: #047857;">
+                  {{ ticket.get_priority_display }}
+                </span>
+              </td>
+
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="4" class="px-6 py-12 text-center">
+                <div class="flex flex-col items-center justify-center">
+                  <div class="w-12 h-12 rounded-2xl bg-gray-100 flex items-center justify-center mb-3 text-gray-400">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5z"></path>
+                    </svg>
+                  </div>
+                  <p class="text-gray-500 text-sm font-medium mb-1">Aucun ticket trouvé pour le moment.</p>
+                  <a href="{% url 'tickets:create' %}" class="text-sm font-semibold text-emerald-600 hover:text-emerald-700 hover:underline" style="color: #059669;">
+                    Créer le premier ticket
+                  </a>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Pagination -->
+  <div class="mt-6">
+    {% include 'partials/_pagination.html' %}
+  </div>
+
+</div>
+
+<!-- 🎨 Injection CSS pour styliser dynamiquement les champs du filtre Django -->
+<style>
+  .filter-form input, 
+  .filter-form select {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.75rem;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    color: #111827;
+    background-color: #ffffff;
+    transition: all 0.2s;
+    outline: none;
+    box-sizing: border-box;
+  }
+  .filter-form input:focus, 
+  .filter-form select:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.1);
+  }
+</style>
+{% endblock %}

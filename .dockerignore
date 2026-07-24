@@ -1,0 +1,12 @@
+.venv/
+.git/
+htmlcov/
+__pycache__/
+*.pyc
+.env
+db.sqlite3
+Livre-BugTracker-Django/
+docs/
+mes-corriges/
+media/
+staticfiles/
