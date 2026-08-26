@@ -13,6 +13,7 @@ from .services import assign_project_manager, add_member
 
 from accounts.mixins import CompanyScopedMixin
 from accounts.permissions import can_create_project, can_manage_project
+from accounts.models import Roles
 
 
 class ProjectListView(CompanyScopedMixin, ListView):
@@ -32,10 +33,12 @@ class ProjectDetailView(CompanyScopedMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         company = self.object.company
-        context['project_managers'] = company.members_in_role('ProjectManager')
+        context['project_managers'] = company.members_in_role(
+            Roles.PROJECT_MANAGER)
         context['assignables'] = company.members.exclude(
-            groups__name='ProjectManager')
+            groups__name=Roles.PROJECT_MANAGER)
         return context
+
 
 
 class ProjectCreateView(CompanyScopedMixin, UserPassesTestMixin, CreateView):

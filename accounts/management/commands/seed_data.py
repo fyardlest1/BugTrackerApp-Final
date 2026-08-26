@@ -1,6 +1,7 @@
 # accounts/management/commands/seed_data.py
 import random
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.conf import settings
 from django.contrib.auth.models import Group
 from faker import Faker
 from accounts.models import CustomUser, Company, Roles
@@ -19,6 +20,11 @@ class Command(BaseCommand):
         fake = Faker('fr_FR')
         
         if options['flush']:
+            if not settings.DEBUG:
+                raise CommandError(
+                    "--flush est refusé quand DEBUG vaut False."
+                    "Cette commande ne doit jamais tourner en production.")
+
             Company.objects.all().delete()
             CustomUser.objects.filter(is_superuser=False).delete()
             

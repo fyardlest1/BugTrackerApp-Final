@@ -28,10 +28,11 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         context['priority_data'] = [tickets.filter(priority=v).count() for v, _ in TicketPriority.choices]
 
         # Résolus contre non résolus
+        total = tickets.count()
         resolved = tickets.filter(status=TicketStatus.RESOLVED).count()
+        context['total'] = total
         context['resolved'] = resolved
-        context['unresolved'] = tickets.count() - resolved
-        context['total'] = tickets.count()
+        context['unresolved'] = total - resolved
         
         # Cartes de statistiques
         context['nb_projets'] = Project.objects.for_company(
