@@ -4,6 +4,12 @@
 
 {% block content %}
 
+{% if sans_entreprise %}
+  <p>Ce compte n'est rattaché à aucune entreprise. Le tableau de bord affiche
+     les données d'une entreprise : rattache ce compte depuis l'administration,
+     ou connecte-toi avec un compte de démonstration.</p>
+{% else %}
+
 {{ priority_labels|json_script:"priority-labels" }}
 {{ priority_data|json_script:"priority-data" }}
 
@@ -150,4 +156,5 @@
   });
 </script>
 
+{% endif %}
 {% endblock %}

@@ -20,6 +20,13 @@ class DashboardView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        company = user.company
+        
+        if company is None:
+            # Compte non rattaché à une entreprise : superutilisateur, en général.
+            context['sans_entreprise'] = True
+            return context
+        
         tickets = Ticket.objects.filter(
             project__company=user.company, archived=False)
 

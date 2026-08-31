@@ -48,11 +48,18 @@ class CompanyDetailView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         company = self.request.user.company
+        
+        if company is None:
+            # Compte non rattaché à une entreprise : un superutilisateur,
+            # en général. Il n'y a rien à afficher sur cette page.
+            context['sans_entreprise'] = True
+            return context
+        
         context['roles'] = Roles.choices
         context['company'] = company
-        # context['members'] = company.members.all()
+        # context['members'] = company.members.prefetch_related('groups')
         context['members'] = get_user_model().objects.filter(
-            company=self.request.user.company).annotate(
+            company=company).prefetch_related('groups').annotate(
             nb_projets=Count('projects', distinct=True))
         context['projects'] = company.projects.all()[:5]
         

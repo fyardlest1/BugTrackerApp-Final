@@ -4,6 +4,63 @@
 {% block title %}{{ company.name }} - BugTracker{% endblock %}
 
 {% block content %}
+
+{% if sans_entreprise %}
+  <div class="max-w-2xl mx-auto my-12 px-4">
+    <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-8 text-center transition-all hover:shadow-md">
+      
+      <!-- Icône d'organisation / alerte -->
+      <div class="w-16 h-16 rounded-2xl bg-amber-50 flex items-center justify-center mx-auto mb-5 border border-amber-100 shadow-sm">
+        <svg class="w-8 h-8 text-amber-600" style="color: #d97706;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+        </svg>
+      </div>
+
+      <h1 class="text-2xl sm:text-3xl font-bold tracking-tight mb-3" style="color: #3d2514;">
+        Aucune entreprise rattachée
+      </h1>
+      
+      <p class="text-stone-600 text-sm leading-relaxed max-w-lg mx-auto mb-8">
+        Ce compte n'est rattaché à aucune organisation. Rattache-le depuis le panneau d'administration ou connecte-toi avec un compte de démonstration pour explorer l'application.
+      </p>
+
+      <!-- Cartouche d'aide -->
+      <div class="bg-stone-50 rounded-xl p-4 border border-stone-200/70 text-left text-xs text-stone-600 space-y-2 mb-8">
+        <div class="flex items-start gap-2.5">
+          <span class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background-color: #d97706;"></span>
+          <span>Demande à un <strong>administrateur</strong> de rattacher ton profil à une entreprise.</span>
+        </div>
+        <div class="flex items-start gap-2.5">
+          <span class="w-1.5 h-1.5 rounded-full mt-1.5 flex-shrink-0" style="background-color: #d97706;"></span>
+          <span>Ou utilise l'un des <strong>profils démo</strong> préconfigurés pour tester directement.</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <a href="{% url 'home' %}#demo"
+           class="w-full sm:w-auto inline-flex items-center justify-center text-white font-bold py-3 px-6 rounded-xl shadow-md shadow-amber-600/10 hover:bg-amber-700 transition-all text-sm"
+           style="background-color: #d97706;">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+          </svg>
+          Comptes de démonstration
+        </a>
+
+        <form method="post" action="{% url 'logout' %}" class="w-full sm:w-auto m-0">
+          {% csrf_token %}
+          <button type="submit"
+                  class="w-full inline-flex items-center justify-center bg-stone-100 hover:bg-stone-200 text-stone-700 font-semibold py-3 px-6 rounded-xl transition-colors text-sm">
+            Déconnexion
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+{% else %}
+
 <div class="max-w-6xl mx-auto my-8 px-4 space-y-8">
 
   <!-- CARTE 1 : Identité de l'entreprise -->
@@ -173,4 +230,5 @@
   </div>
 
 </div>
+{% endif %}
 {% endblock %}
