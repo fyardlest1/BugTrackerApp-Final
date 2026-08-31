@@ -1,0 +1,17 @@
+<!-- templates/accounts/sans_entreprise.html -->
+{% extends 'base.html' %}
+{% block title %}Aucune entreprise{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white rounded-xl shadow p-8">
+  <h1 class="text-2xl font-bold text-emerald-700 mb-4">Aucune entreprise</h1>
+  <p class="text-gray-600">
+    Ce compte n'est rattaché à aucune entreprise. Les pages qui affichent
+    des données d'entreprise ne peuvent donc rien te montrer.
+  </p>
+  <p class="text-gray-600 mt-4">
+    Rattache ce compte depuis l'administration, ou connecte-toi avec un
+    compte de démonstration.
+  </p>
+</div>
+{% endblock %}

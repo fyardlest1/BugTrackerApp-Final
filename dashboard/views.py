@@ -1,10 +1,11 @@
 # dashboard/views.py
 from django.shortcuts import render, redirect
 from django.db.models import Count, Q
-from django.contrib.auth.mixins import LoginRequiredMixin
+# from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import TemplateView
 from tickets.models import Ticket, TicketPriority, TicketStatus
 from projects.models import Project
+from accounts.mixins import CompanyRequiredMixin
 
 
 def home(request):
@@ -14,7 +15,7 @@ def home(request):
     return render(request, 'landing.html')
 
 
-class DashboardView(LoginRequiredMixin, TemplateView):
+class DashboardView(CompanyRequiredMixin, TemplateView):
     template_name = 'dashboard/dashboard.html'
 
     def get_context_data(self, **kwargs):
@@ -22,10 +23,11 @@ class DashboardView(LoginRequiredMixin, TemplateView):
         user = self.request.user
         company = user.company
         
-        if company is None:
-            # Compte non rattaché à une entreprise : superutilisateur, en général.
-            context['sans_entreprise'] = True
-            return context
+        # --- désactivé le temps de l'expérience ---
+        # if company is None:
+        #     # Compte non rattaché à une entreprise : superutilisateur, en général.
+        #     context['sans_entreprise'] = True
+        #     return context
         
         tickets = Ticket.objects.filter(
             project__company=user.company, archived=False)

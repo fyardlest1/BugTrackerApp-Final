@@ -1,6 +1,6 @@
 # accounts/models.py
 import uuid
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.db import models
 
 
@@ -40,6 +40,18 @@ class Company(BaseModel):
         return self.name
 
 
+class CustomUserManager(UserManager):
+    """Rattache tout nouveau superutilisateur à l'entreprise interne."""
+
+    def create_superuser(self, username, email=None, password=None, **extra):
+        user = super().create_superuser(username, email, password, **extra)
+        if user.company_id is None:
+            company, _ = Company.objects.get_or_create(name='Administration')
+            user.company = company
+            user.save(update_fields=['company'])
+        return user
+
+
 # Creation d'un modèle utilisateur personnalisé en héritant de AbstractUser
 class CustomUser(AbstractUser):
     """
@@ -50,6 +62,8 @@ class CustomUser(AbstractUser):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='members', null=True, blank=True)
     phone = models.CharField(max_length=30, blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
+    
+    objects = CustomUserManager()
     
     @property
     def role(self):

@@ -10,4 +10,4 @@ def send_html_email(subject, recipients, template, context):
     text = strip_tags(html)
     message = EmailMultiAlternatives(subject, text, to=recipients)
     message.attach_alternative(html, 'text/html')
-    message.send(fail_silently=True)
+    return message.send(fail_silently=True)
