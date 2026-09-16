@@ -24,6 +24,9 @@ class Project(BaseModel):
     archived_by_project = models.BooleanField(default=False)
     objects = CompanyQuerySet.as_manager()
     
+    class Meta:
+        ordering = ['name']   # ordre alphabétique
+    
     @transaction.atomic
     def archive(self):
         self.archived = True

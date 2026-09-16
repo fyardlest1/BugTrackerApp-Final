@@ -20,7 +20,7 @@ from .services import assign_developer
 from .filters import TicketFilter
 
 from projects.models import Project
-from accounts.permissions import can_edit_ticket, can_comment_ticket
+from accounts.permissions import can_edit_ticket, can_comment_ticket, can_manage_project
 from accounts.models import Roles
 
 
@@ -97,6 +97,7 @@ class TicketDetailView(LoginRequiredMixin, DetailView):
         project = self.object.project
         context['eligible_developers'] = project.members.filter(groups__name=Roles.DEVELOPER)
         context['can_edit'] = can_edit_ticket(self.request.user, self.object)
+        context['can_assign'] = can_manage_project(self.request.user, self.object.project)
 
         return context
 

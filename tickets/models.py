@@ -31,6 +31,9 @@ class Ticket(BaseModel):
     archived = models.BooleanField(default=False)
     archived_by_project = models.BooleanField(default=False)
     
+    class Meta:
+        ordering = ['-created_at']   # le plus récent d'abord
+    
     CHAMPS_SUIVIS = ['status', 'priority', 'developer']
     
     def save(self, *args, **kwargs):
