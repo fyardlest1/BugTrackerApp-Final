@@ -31,7 +31,7 @@ class Command(BaseCommand):
         for role in Roles.values:
             Group.objects.get_or_create(name=role)
 
-        for _ in range(5):              # 3 entreprises
+        for _ in range(3):              # 3 entreprises
             company = Company.objects.create(
                 name=fake.company(), 
                 description=fake.catch_phrase()
